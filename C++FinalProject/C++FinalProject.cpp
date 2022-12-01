@@ -45,7 +45,7 @@ void menu()
 }
 
 // defined below main
-int getHandTotal(string arr[], string str);
+int getHandTotal(string str, string card1, string card2 = "0");
 int checkTotal(int total);
 bool checkBank();
 void buildDeck();
@@ -55,9 +55,10 @@ void initialDeal();
 void displayHand(string arr[], string str);
 void stayOrHit();
 void hit(string arr[], string str);
-void stay(int pTotal);
+void stay();
 void playerLose();
 void playAgain();
+void clearHand(string arr[]);
 
 // blackjack game
 void blackJack()
@@ -73,13 +74,13 @@ void blackJack()
 	dealerTotal = 0;
 
 	betting();
-	
+
 	initialDeal();
-	
+
 	displayHand(playerHand, "player");
 	// after the deal, get totals and check hands for 21
-	playerTotal = getHandTotal(playerHand, "player");
-	dealerTotal = getHandTotal(dealerHand, "dealer");
+	playerTotal += getHandTotal("player", playerHand[0], playerHand[1]);
+	dealerTotal += getHandTotal("dealer", dealerHand[0], dealerHand[1]);
 	int dealerState = checkTotal(dealerTotal);
 	int playerState = checkTotal(playerTotal);
 	if (dealerState == 2 && playerState == 2)
@@ -92,6 +93,7 @@ void blackJack()
 	else if (dealerState == 2)
 	{
 		cout << "\nThe dealer has blackjack. You lose.\n";
+		displayHand(dealerHand, "dealer");
 		bank -= bet;
 		checkBank();
 		playAgain();
@@ -223,22 +225,17 @@ void displayHand(string arr[], string str)
 }
 
 // function to turn string card values into integer totals
-int getHandTotal(string arr[], string str)
+int getHandTotal(string str, string card1, string card2)
 {
-	int size = 0;
-	if (str == "player")
-	{
-		size = playerCards;
-	}
-	else
-	{
-		size = dealerCards;
-	}
-
 	int total = 0;
-	for (i = 0; i < size; i++)
+	string arr[2] = { card1, card2 };
+	for (i = 0; i < 2; i++)
 	{
-		if (arr[i] == "10" || arr[i] == "J" || arr[i] == "Q" || arr[i] == "K")
+		if (arr[i] == "0")
+		{
+			break;
+		}
+		else if (arr[i] == "10" || arr[i] == "J" || arr[i] == "Q" || arr[i] == "K")
 		{
 			total += 10;
 			continue;
@@ -365,11 +362,13 @@ void playerLose()
 void playAgain()
 {
 	int choice = 0;
+	clearHand(playerHand);
+	clearHand(dealerHand);
 	cout << "The hand is over, would you like to play again?\n";
 	cout << "\t1. Play again!\n";
 	cout << "\t2. Exit." << endl;
 	cin >> choice;
-	
+
 	while (choice != 1 && choice != 2)
 	{
 		playAgain();
@@ -418,7 +417,7 @@ void stayOrHit()
 	{
 		hit(playerHand, "player");
 		displayHand(playerHand, "player");
-		playerTotal = getHandTotal(playerHand, "player");
+		playerTotal += getHandTotal("player", playerHand[playerCards - 1]);
 		playerState = checkTotal(playerTotal);
 		switch (playerState)
 		{
@@ -428,7 +427,7 @@ void stayOrHit()
 			break;
 		case 2:
 			cout << "\nYou have 21! It is now the dealer's turn.\n";
-			stay(playerTotal);
+			stay();
 			break;
 		case 3:
 			cout << "\n\t\tYou have BUSTED!\n";
@@ -441,34 +440,52 @@ void stayOrHit()
 	else
 	{
 		cout << "\nIt is now the dealer's turn.\n";
-		stay(playerTotal);
+		stay();
 	}
 }
 
 // after player stays, or gets 21 it is now the dealers turn
 // the dealer hits below 17 and stays anywhere above
-void stay(int pTotal)
+void stay()
 {
-	int playerTotal = pTotal;
 	displayHand(dealerHand, "dealer");
-	int dealerTotal = getHandTotal(dealerHand, "dealer");
 	if (dealerTotal > playerTotal && dealerTotal < 22)
 	{
-		cout << "\n\tDealer Wins.\n";
+		cout << "\n\tDealer Wins with " << dealerTotal << "\n";
 		bank -= bet;
 		checkBank();
 		playAgain();
 	}
-	else if (dealerTotal < 17)
+	else if (dealerTotal < 17 || dealerTotal < playerTotal)
 	{
 		hit(dealerHand, "dealer");
+		dealerTotal += getHandTotal("dealer", dealerHand[dealerCards - 1]);
 		cout << "\n";
-		stay(playerTotal);
+		stay();
 	}
 	else if (dealerTotal > 21)
 	{
 		cout << "\n\tDealer BUSTS! You win!\n";
 		bank += bet;
+		cout << "You have $" << bank << ", in the bank." << endl;
 		playAgain();
+	}
+	else if (dealerTotal >= 17 && dealerTotal == playerTotal)
+	{
+		bet = 0;
+		displayHand(dealerHand, "dealer");
+		cout << "\n\n\tIt's a draw." << endl;
+		playAgain();
+	}
+}
+
+// clear a hand of all saved cards
+void clearHand(string arr[])
+{
+	for (i = 0; i < 10; i++)
+	{
+		if (arr[i] == " ")
+			break;
+		arr[i].clear();
 	}
 }
