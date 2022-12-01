@@ -1,0 +1,3 @@
+﻿  C++FinalProject.cpp
+C:\5. Programing Info\Git Projects\CasinoGamesConsoleApp\C++FinalProject\C++FinalProject.cpp(75,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  C++FinalProject.vcxproj -> C:\5. Programing Info\Git Projects\CasinoGamesConsoleApp\C++FinalProject\x64\Debug\C++FinalProject.exe
