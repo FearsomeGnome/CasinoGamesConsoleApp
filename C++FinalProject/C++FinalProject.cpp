@@ -2,10 +2,7 @@
 
 #include <iostream>
 #include <algorithm>
-#include <iomanip>
-#include <vector>
 #include <string>
-#include <queue>
 
 using namespace std;
 
@@ -13,8 +10,14 @@ using namespace std;
 int i, j;
 int choice = 0;
 int bank = 50;
-int bet;
+// roulette variables and wheel const
+int bets[];
+string chosenNums[];
+string winningNum;
+const string wheelNums[38] = { "00", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16",
+	"17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36" };
 // blackjack variables
+int bet;
 int cardCount = 0;
 int dealerCards = 0;
 int playerCards = 0;
@@ -33,16 +36,20 @@ Card deck[52]{};
 // show the player what games they can play and ask them to choose a game
 void menu()
 {
-	cout << "-------------------------------------------" << endl;
-	cout << "|                  MENU                   |" << endl;
-	cout << "|            1. Black Jack                |" << endl;
-	cout << "|            2. Roulette                  |" << endl;
-	cout << "|                                         |" << endl;
-	cout << "-------------------------------------------" << endl;
-	cout << "Welcome player, which game would you like to play? ";
+	cout << "    -------------------------------------------" << endl;
+	cout << "    |                  MENU                   |" << endl;
+	cout << "    |            1. Black Jack                |" << endl;
+	cout << "    |            2. Roulette                  |" << endl;
+	cout << "    |                                         |" << endl;
+	cout << "    -------------------------------------------" << endl;
+	cout << " Welcome player, which game would you like to play? ";
 	// save players choice into variable
 	cin >> choice;
 }
+
+// Universal functions - defined below main
+
+// Roulette functions - defined below main
 
 // Blackjack functions - defined below main
 int getHandTotal(string str, string card1, string card2 = "0");
@@ -88,20 +95,20 @@ void blackJack()
 		bet = 0;
 		displayHand(dealerHand, "dealer");
 		cout << "\n\n\tIt's a draw." << endl;
+		bank += bet;
 		playAgain();
 	}
 	else if (dealerState == 2)
 	{
-		cout << "\nThe dealer has blackjack. You lose.\n";
+		cout << "\n    The dealer has blackjack. You lose.\n";
 		displayHand(dealerHand, "dealer");
-		bank -= bet;
 		checkBank();
 		playAgain();
 	}
 	else if (playerState == 2)
 	{
 		cout << "\n\n\tBLACKJACK! You win!\n";
-		bank += bet;
+		bank += (bet * 2);
 		playAgain();
 	}
 
@@ -113,7 +120,19 @@ void blackJack()
 // roulette game
 void roulette()
 {
-
+	cout << "\n    The numbers available to bet on are:\n\n";
+	for (i = 0; i < 38; i++)
+	{
+		if (i < 19 || i > 19)
+		{
+			cout << "[" << wheelNums[i] << "] ";
+		}
+		else
+		{
+			cout << "[" << wheelNums[i] << "]\n";
+		}
+	}
+	cout << "\n";
 }
 
 int main()
@@ -133,7 +152,7 @@ int main()
 	}
 	else
 	{
-		// roulette
+		roulette();
 	}
 
 	return 0;
@@ -163,6 +182,7 @@ void betting()
 	cout << "\n\tHow much would you like to bet? ";
 	cin >> bet;
 	checkBet(bet);
+	bank -= bet;
 }
 
 // function to check if bet is more than player has or negative
@@ -300,7 +320,7 @@ int getHandTotal(string str, string card1, string card2)
 				int choice = 0;
 				while (choice != 1 && choice != 11)
 				{
-					cout << "\nYou have an Ace. Would you like it to equal 1 or 11?\nPlease enter 1 or 11: ";
+					cout << "\n  You have an Ace. Would you like it to equal 1 or 11?\n  Please enter 1 or 11: ";
 					cin >> choice;
 				}
 				if (choice == 1)
@@ -349,12 +369,12 @@ bool checkBank()
 void playerLose()
 {
 	cout << "\n\n";
-	cout << "-------------------------------------------" << endl;
-	cout << "|                                         |" << endl;
-	cout << "|               GAME OVER                 |" << endl;
-	cout << "|            You are bankrupt             |" << endl;
-	cout << "|                                         |" << endl;
-	cout << "-------------------------------------------" << endl;
+	cout << "    -------------------------------------------" << endl;
+	cout << "    |                                         |" << endl;
+	cout << "    |               GAME OVER                 |" << endl;
+	cout << "    |            You are bankrupt             |" << endl;
+	cout << "    |                                         |" << endl;
+	cout << "    -------------------------------------------" << endl;
 	exit(0);
 }
 
@@ -364,9 +384,10 @@ void playAgain()
 	int choice = 0;
 	clearHand(playerHand);
 	clearHand(dealerHand);
-	cout << "\nThe hand is over, would you like to play again?\n";
+	bet = 0;
+	cout << "\n    The hand is over, would you like to play again?\n";
 	cout << "\t1. Play again!\n";
-	cout << "\t2. Exit." << endl;
+	cout << "\t2. Exit." << "\n   ";
 	cin >> choice;
 
 	while (choice != 1 && choice != 2)
@@ -408,9 +429,9 @@ void stayOrHit()
 	int choice = 0;
 	while (choice != 1 && choice != 2)
 	{
-		cout << "\n\nWould you like to take a card or stop?\n";
+		cout << "\n\n    Would you like to take a card or stop?\n";
 		cout << "\t1. Hit me!\n";
-		cout << "\t2. Stay." << endl;
+		cout << "\t2. Stay." << "\n   ";
 		cin >> choice;
 	}
 	if (choice == 1)
@@ -426,12 +447,11 @@ void stayOrHit()
 			stayOrHit();
 			break;
 		case 2:
-			cout << "\nYou have 21! It is now the dealer's turn.\n";
+			cout << "\n    You have 21! It is now the dealer's turn.\n";
 			stay();
 			break;
 		case 3:
-			cout << "\n\t\tYou have BUSTED!\n";
-			bank -= bet;
+			cout << "\n\tYou have BUSTED!\n";
 			checkBank();
 			playAgain();
 			break;
@@ -449,14 +469,14 @@ void stayOrHit()
 void stay()
 {
 	displayHand(dealerHand, "dealer");
-	if (dealerTotal > playerTotal && dealerTotal < 22)
+	if (dealerTotal > playerTotal && dealerTotal < 22 && dealerTotal >= 17)
 	{
+		cout << "\n\tDealer Stays";
 		cout << "\n\tDealer Wins with " << dealerTotal << "\n";
-		bank -= bet;
 		checkBank();
 		playAgain();
 	}
-	else if (dealerTotal < 17 || dealerTotal < playerTotal)
+	else if (dealerTotal < 17)
 	{
 		cout << "\n\tDealer hits...";
 		hit(dealerHand, "dealer");
@@ -467,15 +487,22 @@ void stay()
 	else if (dealerTotal > 21)
 	{
 		cout << "\n\tDealer BUSTS! You win!\n";
-		bank += bet;
+		bank += (bet * 2);
 		cout << "\n\tYou have $" << bank << ", in the bank." << endl;
 		playAgain();
 	}
 	else if (dealerTotal >= 17 && dealerTotal == playerTotal)
 	{
-		bet = 0;
-		displayHand(dealerHand, "dealer");
+		cout << "\n\tDealer Stays";
 		cout << "\n\n\tIt's a draw." << endl;
+		bank += bet;
+		playAgain();
+	}
+	else if (dealerTotal >= 17 && dealerTotal < playerTotal)
+	{
+		cout << "\n\tDealer stays. You win!\n";
+		bank += (bet * 2);
+		cout << "\n\tYou have $" << bank << ", in the bank." << endl;
 		playAgain();
 	}
 }

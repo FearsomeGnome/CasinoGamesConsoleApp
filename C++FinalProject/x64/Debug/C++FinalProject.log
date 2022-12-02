@@ -1,4 +1,4 @@
 ﻿  C++FinalProject.cpp
-C:\5. Programing Info\Git Projects\CasinoGamesConsoleApp\C++FinalProject\C++FinalProject.cpp(66,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-C:\5. Programing Info\Git Projects\CasinoGamesConsoleApp\C++FinalProject\C++FinalProject.cpp(346): warning C4715: 'checkBank': not all control paths return a value
+C:\5. Programing Info\Git Projects\CasinoGamesConsoleApp\C++FinalProject\C++FinalProject.cpp(73,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\5. Programing Info\Git Projects\CasinoGamesConsoleApp\C++FinalProject\C++FinalProject.cpp(366): warning C4715: 'checkBank': not all control paths return a value
   C++FinalProject.vcxproj -> C:\5. Programing Info\Git Projects\CasinoGamesConsoleApp\C++FinalProject\x64\Debug\C++FinalProject.exe
