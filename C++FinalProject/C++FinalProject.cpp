@@ -1,8 +1,22 @@
 // C++FinalProject.cpp
+/*
+This is a console app that allows the user to play blackjack and a simplified version
+of roulette. Blackjack creates and shuffles a deck of cards and allows the user to take cards
+place bets and then watch the dealer play their hand and shows wins and loses. Roulette will
+display the available numbers to bet on and allow the player to choose and bet on up to 38 numbers
+or until their bank is empty. A winning number pays 36 to 1. A random number is chosen and used
+as the index number to pick from the wheel array. Wins and loses are displayed as appropriate.
+Exiting either game takes the player back to the main menu and their bank total will persist
+through either game.
+*/
 
 #include <iostream>
 #include <algorithm>
 #include <string>
+// necessary line to resize window, indicates you are using windows 2000 or later
+#define _WIN32_WINNT 0x0500
+// The above line must come before you include windows.h
+#include <Windows.h>
 
 using namespace std;
 
@@ -38,6 +52,47 @@ struct Card
 };
 Card deck[52]{};
 
+// Universal functions - defined below main
+void menu();
+void betting();
+bool checkBank();
+void checkBet(int num);
+void playAgain(string str);
+// Roulette functions - defined below main
+void roulette();
+void chooseNum();
+void displayBets();
+bool keepChoosing();
+void clearPlayerBets();
+void checkAndDisplay(string str);
+// Blackjack functions - defined below main
+void blackJack();
+void stay();
+void buildDeck();
+void stayOrHit();
+void playerLose();
+void initialDeal();
+int checkTotal(int total);
+void clearHand(string arr[]);
+void hit(string arr[], string str);
+void displayHand(string arr[], string str);
+int getHandTotal(string str, string card1, string card2 = "0");
+
+
+int main()
+{
+	HWND console = GetConsoleWindow(); // assign handle to console
+	RECT r; // create rect
+	GetWindowRect(console, &r); // store current console dimensions
+	// MoveWindow(window handle, x, y, width, height, redraw window bool)
+	MoveWindow(console, r.left, r.top, 800, 1000, TRUE);
+	
+	// call menu
+	menu();
+	
+	return 0;
+}
+
 // show the player what games they can play and ask them to choose a game
 void menu()
 {
@@ -45,35 +100,33 @@ void menu()
 	cout << "    |                  MENU                   |" << endl;
 	cout << "    |            1. Black Jack                |" << endl;
 	cout << "    |            2. Roulette                  |" << endl;
-	cout << "    |                                         |" << endl;
+	cout << "    |            3. Exit                      |" << endl;
 	cout << "    -------------------------------------------" << endl;
 	cout << " Welcome player, which game would you like to play? ";
 	// save players choice into variable
 	cin >> choice;
+	// check player choice to ensure correct entry and if not replay menu
+	while (choice != 1 && choice != 2 && choice != 3)
+	{
+		menu();
+	}
+	// show player game based on choice
+	if (choice == 1)
+	{
+		cout << "\n\tShuffling new deck....\n";
+		Sleep(2000);
+		buildDeck();
+		blackJack();
+	}
+	else if (choice == 2)
+	{
+		roulette();
+	}
+	else
+	{
+		exit(0);
+	}
 }
-
-// Universal functions - defined below main
-void betting();
-bool checkBank();
-void checkBet(int num);
-void playAgain(string str);
-// Roulette functions - defined below main
-void chooseNum();
-void displayBets();
-bool keepChoosing();
-void clearPlayerBets();
-void checkAndDisplay(string str);
-// Blackjack functions - defined below main
-int getHandTotal(string str, string card1, string card2 = "0");
-int checkTotal(int total);
-void stay();
-void buildDeck();
-void stayOrHit();
-void playerLose();
-void initialDeal();
-void clearHand(string arr[]);
-void hit(string arr[], string str);
-void displayHand(string arr[], string str);
 
 // blackjack game
 void blackJack()
@@ -156,37 +209,23 @@ void roulette()
 
 	displayBets();
 	// generate random number to use as index on the wheel / define winning number
+	cout << "\n\tSpinning the wheel....\n";
 	srand(time(0));
 	int randNum = rand() % 38;
 	winningNum = wheelNums[randNum];
+	Sleep(1000);
+	cout << "   ...\n";
+	Sleep(800);
+	cout << "       ...\n";
+	Sleep(600);
+	cout << "           ...\n";
 	// display winning number to player and complete the round
 	cout << "\n   The winning number is: " << winningNum << endl;
+	Sleep(1000);
 	checkAndDisplay(winningNum);
+	Sleep(1000);
 	checkBank();
 	playAgain("roulette");
-}
-
-int main()
-{
-	// call menu
-	menu();
-	// check player choice to ensure correct entry and if not replay menu
-	while (choice != 1 && choice != 2)
-	{
-		menu();
-	}
-	// show player game based on choice
-	if (choice == 1)
-	{
-		buildDeck();
-		blackJack();
-	}
-	else
-	{
-		roulette();
-	}
-
-	return 0;
 }
 
 // build card deck
@@ -263,6 +302,8 @@ void displayHand(string arr[], string str)
 {
 	if (str == "player")
 	{
+		cout << "\n   Dealing...." << endl;
+		Sleep(1500);
 		cout << "\n\tYour cards are: ";
 	}
 	else if (str == "dealer")
@@ -396,6 +437,7 @@ bool checkBank()
 	if (bank < 1)
 	{
 		playerLose();
+		return false;
 	}
 	else return true;
 }
@@ -439,7 +481,7 @@ void playAgain(string str)
 		}
 		else
 		{
-			exit(0);
+			menu();
 		}
 	}
 	else if (str == "roulette")
@@ -463,7 +505,7 @@ void playAgain(string str)
 		}
 		else
 		{
-			exit(0);
+			menu();
 		}
 	}
 	
@@ -535,14 +577,18 @@ void stay()
 	displayHand(dealerHand, "dealer");
 	if (dealerTotal > playerTotal && dealerTotal < 22 && dealerTotal >= 17)
 	{
-		cout << "\n\tDealer Stays";
+		Sleep(2000);
+		cout << "\n\tDealer Stays\n";
+		Sleep(2000);
 		cout << "\n\tDealer Wins with " << dealerTotal << "\n";
 		checkBank();
 		playAgain("blackjack");
 	}
 	else if (dealerTotal < 17)
 	{
+		Sleep(2000);
 		cout << "\n\tDealer hits...";
+		Sleep(2000);
 		hit(dealerHand, "dealer");
 		dealerTotal += getHandTotal("dealer", dealerHand[dealerCards - 1]);
 		cout << "\n";
@@ -550,23 +596,25 @@ void stay()
 	}
 	else if (dealerTotal > 21)
 	{
-		cout << "\n\tDealer BUSTS! You win!\n";
+		Sleep(2000);
+		cout << "\n\tDealer BUSTS! You won $" << bet * 2 << "!\n";
 		bank += (bet * 2);
-		cout << "\n\tYou have $" << bank << ", in the bank." << endl;
 		playAgain("blackjack");
 	}
 	else if (dealerTotal >= 17 && dealerTotal == playerTotal)
 	{
+		Sleep(2000);
 		cout << "\n\tDealer Stays";
+		Sleep(2000);
 		cout << "\n\n\tIt's a draw." << endl;
 		bank += bet;
 		playAgain("blackjack");
 	}
 	else if (dealerTotal >= 17 && dealerTotal < playerTotal)
 	{
-		cout << "\n\tDealer stays. You win!\n";
+		Sleep(2000);
+		cout << "\n\tDealer stays. You won $" << bet * 2 << "!\n";
 		bank += (bet * 2);
-		cout << "\n\tYou have $" << bank << ", in the bank." << endl;
 		playAgain("blackjack");
 	}
 }
@@ -606,15 +654,17 @@ void chooseNum()
 			break;
 		}
 	}
-	if (bank == 0)
-	{
-		cout << "  You have no more money to bet." << endl;
-	}
 }
 
 // ask the player if they want to keep choosing numbers and betting
 bool keepChoosing()
 {
+	if (numCtr == 37 || bank == 0)
+	{
+		cout << "\n\tYou cannot place anymore bets." << endl;
+		return false;
+	}
+
 	cout << "\n   Would you like to choose another number to bet on?\n";
 	cout << "\t\t1. Yes\n";
 	cout << "\t\t2. No\n\t";
@@ -651,19 +701,20 @@ void checkAndDisplay(string str)
 {
 	for (i = 0; i < 38; i++)
 	{
+		Sleep(500);
 		if (empty(playerBets[i].num))
 		{
 			break;
 		}
 		else if (playerBets[i].num == str)
 		{
-			cout << "\n\n\tYou have matched the winning number! " << playerBets[i].num;
-			cout << "\n\tYou won $" << playerBets[i].amount * 2;
-			bank += playerBets[i].amount * 2;
+			cout << "\n\n\tYou have matched the winning number! " << playerBets[i].num << endl;
+			cout << "\n\tYou won $" << playerBets[i].amount * 36;
+			bank += playerBets[i].amount * 36;
 		}
 		else
 		{
-			cout << "\n\n\tThis number was a bust. " << playerBets[i].num;
+			cout << "\n\n\tThis number was a bust. " << playerBets[i].num << endl;
 			cout << "\n\tYou lost $" << playerBets[i].amount;
 		}
 	}
