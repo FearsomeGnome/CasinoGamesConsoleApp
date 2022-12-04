@@ -1,4 +1,4 @@
 ﻿  C++FinalProject.cpp
-C:\5. Programing Info\Git Projects\CasinoGamesConsoleApp\C++FinalProject\C++FinalProject.cpp(124,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-C:\5. Programing Info\Git Projects\CasinoGamesConsoleApp\C++FinalProject\C++FinalProject.cpp(203,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\5. Programing Info\Git Projects\CasinoGamesConsoleApp\C++FinalProject\C++FinalProject.cpp(134,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\5. Programing Info\Git Projects\CasinoGamesConsoleApp\C++FinalProject\C++FinalProject.cpp(213,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
   C++FinalProject.vcxproj -> C:\5. Programing Info\Git Projects\CasinoGamesConsoleApp\C++FinalProject\x64\Debug\C++FinalProject.exe

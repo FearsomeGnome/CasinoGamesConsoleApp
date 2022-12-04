@@ -153,7 +153,6 @@ void blackJack()
 	int playerState = checkTotal(playerTotal);
 	if (dealerState == 2 && playerState == 2)
 	{
-		bet = 0;
 		displayHand(dealerHand, "dealer");
 		cout << "\n\n\tIt's a draw." << endl;
 		bank += bet;
